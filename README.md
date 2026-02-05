@@ -1,5 +1,6 @@
 # npm-manipulator
 
+
 NPM Manipulator is a tool used to manipulate NPM project definition files. Various manipulations can be performed on a project and their execution can be controlled by provided arguments.
 
 # Usage
