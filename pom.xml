@@ -246,7 +246,7 @@
           <artifactId>license-maven-plugin</artifactId>
           <configuration>
             <properties>
-              <copyright-years>${project.inceptionYear}-2020</copyright-years>
+              <copyright-years>${project.inceptionYear}-2026</copyright-years>
             </properties>
             <header>${session.executionRootDirectory}/.license-header.txt</header>
             <excludes>
