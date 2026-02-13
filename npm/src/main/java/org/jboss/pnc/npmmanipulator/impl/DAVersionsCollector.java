@@ -233,7 +233,7 @@ public class DAVersionsCollector implements Manipulator<NpmResult> {
 
     private Map<NpmPackageRef, List<String>> getExistingVersions(ArrayList<NpmPackageRef> restParam) {
         ReportMapper mapper = new ReportMapper(true, mode);
-        String endpoint = "reports/versions/impl";
+        String endpoint = "reports/versions/npm";
         return getAvailableVersions(restParam, mapper, endpoint);
     }
 
