@@ -29,7 +29,7 @@
 
   <groupId>org.jboss.pnc.npm-manipulator</groupId>
   <artifactId>npm-manipulator-parent</artifactId>
-  <version>1.3.1-SNAPSHOT</version>
+  <version>1.3.1</version>
   <packaging>pom</packaging>
 
   <name>Project Manipulator for NPM</name>
@@ -61,7 +61,7 @@
   <scm>
     <connection>scm:git:https://github.com/project-ncl/npm-manipulator.git</connection>
     <developerConnection>scm:git:git@github.com:project-ncl/npm-manipulator.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>1.3.1</tag>
     <url>https://github.com/project-ncl/npm-manipulator</url>
   </scm>
 
