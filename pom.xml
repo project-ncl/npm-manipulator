@@ -76,9 +76,7 @@
     <version.commons-codec>1.20.0</version.commons-codec>
     <version.commons-lang>3.20.0</version.commons-lang>
     <version.commons-io>2.21.0</version.commons-io>
-    <version.jackson-core>2.21.0</version.jackson-core>
-    <version.jackson-databind>2.21.0</version.jackson-databind>
-    <version.jackson-annotations>2.21</version.jackson-annotations>
+    <version.jackson-bom>2.21.1</version.jackson-bom>
     <version.java-semver>0.10.2</version.java-semver>
     <version.json-path>2.10.0</version.json-path>
     <version.logback>1.5.25</version.logback>
@@ -131,19 +129,11 @@
       </dependency>
 
       <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-annotations</artifactId>
-        <version>${version.jackson-annotations}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-core</artifactId>
-        <version>${version.jackson-core}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-databind</artifactId>
-        <version>${version.jackson-databind}</version>
+        <groupId>com.fasterxml.jackson</groupId>
+        <artifactId>jackson-bom</artifactId>
+        <version>${version.jackson-bom}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
 
       <dependency>
@@ -286,7 +276,7 @@
             </sortPom>
           </pom>
           <java>
-            <removeUnusedImports />
+            <removeUnusedImports/>
             <importOrder>
               <file>java-import-order.txt</file>
             </importOrder>
