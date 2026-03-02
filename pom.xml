@@ -78,7 +78,7 @@
     <version.commons-io>2.21.0</version.commons-io>
     <version.jackson-bom>2.21.1</version.jackson-bom>
     <version.java-semver>0.10.2</version.java-semver>
-    <version.json-path>2.10.0</version.json-path>
+    <version.json-path>3.0.0</version.json-path>
     <version.logback>1.5.32</version.logback>
     <version.slf4j-api>2.0.17</version.slf4j-api>
     <version.unirest-java>3.14.5</version.unirest-java>
