@@ -16,4 +16,4 @@ jobs:
     call-maven-ci:
       uses: project-ncl/shared-github-actions/.github/workflows/maven-ci.yml@v0.0.12
       with:
-        java_version: 11
+        java_version: 17
