@@ -2,14 +2,14 @@
 <!--
 
     JBoss, Home of Professional Open Source.
-    Copyright 2018-2026 Red Hat, Inc., and individual contributors
-    as indicated by the @author tags.
+
+    Copyright © 2018-2026 Red Hat, Inc., and individual contributors as indicated by the @author tags.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+        http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,9 +22,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.redhat.rcm</groupId>
-    <artifactId>redhat-releng-tools</artifactId>
-    <version>13</version>
+    <groupId>org.jboss</groupId>
+    <artifactId>jboss-parent</artifactId>
+    <version>53</version>
   </parent>
 
   <groupId>org.jboss.pnc.npm-manipulator</groupId>
@@ -67,9 +67,6 @@
 
   <properties>
     <maven.compiler.release>11</maven.compiler.release>
-
-    <projectOwner>Red Hat, Inc.</projectOwner>
-    <projectEmail>ncl-dev@redhat.com</projectEmail>
 
     <version.atlas>1.2.2</version.atlas>
     <version.commons-cli>1.11.0</version.commons-cli>
@@ -235,14 +232,20 @@
         <plugin>
           <groupId>com.mycila</groupId>
           <artifactId>license-maven-plugin</artifactId>
+          <version>5.0.0</version>
           <configuration>
             <properties>
-              <copyright-years>${project.inceptionYear}-2026</copyright-years>
+              <owner>Red Hat, Inc., and individual contributors as indicated by the @author tags.</owner>
+              <year>${project.inceptionYear}-2026</year>
             </properties>
-            <header>${session.executionRootDirectory}/.license-header.txt</header>
-            <excludes>
-              <exclude>**/eclipse-codeStyle.xml</exclude>
-            </excludes>
+            <licenseSets>
+              <licenseSet>
+                <multi>
+                  <preamble>JBoss, Home of Professional Open Source.</preamble>
+                  <header>com/mycila/maven/plugin/license/templates/APACHE-2-noemail.txt</header>
+                </multi>
+              </licenseSet>
+            </licenseSets>
           </configuration>
         </plugin>
       </plugins>
@@ -263,6 +266,22 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce-java-version</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireJavaVersion>
+                  <message>To build this project JDK 11 (or greater) is required. Please install it.</message>
+                  <version>[11,)</version>
+                </requireJavaVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
 
       <plugin>
