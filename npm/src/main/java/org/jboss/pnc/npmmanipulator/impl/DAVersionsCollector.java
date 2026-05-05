@@ -46,12 +46,12 @@ import org.jboss.pnc.npmmanipulator.impl.NpmPackageVersionManipulator.Versioning
 import org.jboss.pnc.npmmanipulator.impl.da.DAException;
 import org.jboss.pnc.npmmanipulator.impl.da.ReportMapper;
 import org.jboss.pnc.npmmanipulator.impl.da.ReportObjectMapper;
+import org.jboss.pnc.otel.OTelCLIHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import com.github.zafarkhaja.semver.Version;
-import com.redhat.resilience.otel.OTelCLIHelper;
 
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanContext;
