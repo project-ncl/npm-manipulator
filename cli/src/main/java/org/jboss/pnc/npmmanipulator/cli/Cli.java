@@ -42,6 +42,7 @@ import org.apache.commons.io.FileUtils;
 import org.jboss.pnc.npmmanipulator.api.ManipulationException;
 import org.jboss.pnc.npmmanipulator.api.ManipulationSession;
 import org.jboss.pnc.npmmanipulator.impl.NpmManipulationSessionFactory;
+import org.jboss.pnc.otel.OTelCLIHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -49,7 +50,6 @@ import org.slf4j.MDC;
 import com.ongres.process.FluentProcess;
 import com.ongres.process.FluentProcessBuilder;
 import com.ongres.process.Output;
-import com.redhat.resilience.otel.OTelCLIHelper;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
