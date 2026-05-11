@@ -321,25 +321,6 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-release-plugin</artifactId>
-        <configuration>
-          <tagNameFormat>@{project.version}</tagNameFormat>
-          <autoVersionSubmodules>true</autoVersionSubmodules>
-          <releaseProfiles>release,run-its</releaseProfiles>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.sonatype.central</groupId>
-        <artifactId>central-publishing-maven-plugin</artifactId>
-        <version>0.10.0</version>
-        <extensions>true</extensions>
-        <configuration>
-          <!-- as defined in your settings.xml -->
-          <publishingServerId>central-publisher</publishingServerId>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
 
@@ -365,7 +346,7 @@
     </profile>
 
     <profile>
-      <id>release</id>
+      <id>central-release</id>
       <build>
         <plugins>
           <plugin>
