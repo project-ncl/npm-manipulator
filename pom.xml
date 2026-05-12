@@ -295,7 +295,9 @@
             </sortPom>
           </pom>
           <java>
-            <removeUnusedImports/>
+            <removeUnusedImports>
+              <engine>google-java-format</engine>
+            </removeUnusedImports>
             <importOrder>
               <file>java-import-order.txt</file>
             </importOrder>
