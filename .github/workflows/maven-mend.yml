@@ -16,13 +16,13 @@ permissions:
 
 jobs:
   build:
-    uses: project-ncl/shared-github-actions/.github/workflows/maven-ci.yml@153b97777335953545bc8a907eb5f062af66b7f2 # v0.0.18
+    uses: project-ncl/shared-github-actions/.github/workflows/maven-ci.yml@dc16c38747e72ec04165d5e5e0177e85d21bc5c8 # main
     with:
       upload_artifacts: true
 
   call-mend-ci:
     needs: build
-    uses: project-ncl/shared-github-actions/.github/workflows/mend-ci.yml@153b97777335953545bc8a907eb5f062af66b7f2 # v0.0.18
+    uses: project-ncl/shared-github-actions/.github/workflows/mend-ci.yml@dc16c38747e72ec04165d5e5e0177e85d21bc5c8 # main
     with:
       SCA: true
       SAST: true
