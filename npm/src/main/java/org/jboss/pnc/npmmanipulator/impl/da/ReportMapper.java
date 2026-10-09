@@ -24,10 +24,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.commonjava.atlas.npm.ident.ref.NpmPackageRef;
+import org.jboss.da.model.rest.ErrorMessage;
+import org.jboss.da.model.rest.NPMPackage;
+import org.jboss.da.reports.model.request.VersionsNPMRequest;
+import org.jboss.da.reports.model.response.NPMVersionsReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.zafarkhaja.semver.Version;
 
 public class ReportMapper implements ReportObjectMapper {
@@ -77,19 +82,18 @@ public class ReportMapper implements ReportObjectMapper {
                     return (T) result;
                 }
 
-                @SuppressWarnings("unchecked")
-                List<Map<String, Object>> responseBody = objectMapper.readValue(s, List.class);
+                List<NPMVersionsReport> responseBody = objectMapper.readValue(
+                        s,
+                        new TypeReference<List<NPMVersionsReport>>() {
+                        });
 
-                for (Map<String, Object> npmPackage : responseBody) {
-                    String name = (String) npmPackage.get("name");
-                    String version = (String) npmPackage.get("version");
-                    Version semverVersion = Version.valueOf(version);
-                    // String bestMatchVersion = (String) npmPackage.get("bestMatchVersion");
-                    @SuppressWarnings("unchecked")
-                    List<String> availableVersions = (List<String>) npmPackage.get("availableVersions");
-
+                for (NPMVersionsReport report : responseBody) {
+                    NPMPackage npmPackage = report.getNpmPackage();
+                    List<String> availableVersions = report.getAvailableVersions();
                     if (availableVersions != null) {
-                        NpmPackageRef project = new NpmPackageRef(name, semverVersion);
+                        NpmPackageRef project = new NpmPackageRef(
+                                npmPackage.getName(),
+                                Version.parse(npmPackage.getVersion()));
                         result.put(project, availableVersions);
                     }
                 }
@@ -110,19 +114,18 @@ public class ReportMapper implements ReportObjectMapper {
     public String writeValue(Object value) {
         @SuppressWarnings("unchecked")
         List<NpmPackageRef> projects = (List<NpmPackageRef>) value;
-        Object request;
 
-        List<Map<String, Object>> requestBody = new ArrayList<>();
-
+        List<NPMPackage> packages = new ArrayList<>();
         for (NpmPackageRef project : projects) {
-            Map<String, Object> gav = new HashMap<>();
-            gav.put("name", project.getName());
-            gav.put("version", project.getVersion().toString());
-
-            requestBody.add(gav);
+            packages.add(new NPMPackage(project.getName(), project.getVersion().toString()));
         }
 
-        request = new NVSchema("MAJOR_MINOR", mode, includeAll, requestBody);
+        VersionsNPMRequest request = VersionsNPMRequest.builder()
+                .versionFilter(VersionsNPMRequest.VersionFilter.MAJOR_MINOR)
+                .mode(mode)
+                .includeAll(includeAll)
+                .packages(packages)
+                .build();
 
         try {
             return objectMapper.writeValueAsString(request);
