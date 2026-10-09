@@ -21,6 +21,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
@@ -119,23 +120,27 @@ public class DAVersionsCollectorTest {
     private final AtomicReference<Map<String, List<String>>> capturedHeaders = new AtomicReference<>(
             Collections.emptyMap());
 
-    /**
-     * Minimal JSON response that {@link org.jboss.pnc.npmmanipulator.impl.da.ReportMapper} can parse as an empty
-     * result list (no available versions). This is enough for {@code applyChanges} to complete without error.
-     */
-    private static final String EMPTY_VERSIONS_RESPONSE = "[]";
+    /** Captured raw request body bytes from the last request received by the mock server. */
+    private final AtomicReference<String> capturedRequestBody = new AtomicReference<>("");
+
+    /** Response body the mock server will return; defaults to an empty versions array. */
+    private final AtomicReference<String> mockResponseBody = new AtomicReference<>("[]");
 
     @Before
     public void startMockServer() throws IOException {
         // Unirest uses a global static config; reset it so each test gets a clean slate.
         Unirest.config().reset();
+        mockResponseBody.set("[]");
 
         mockServer = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
         mockPort = mockServer.getAddress().getPort();
 
         mockServer.createContext("/da/rest/v-1/reports/versions/npm", exchange -> {
             capturedHeaders.set(exchange.getRequestHeaders());
-            byte[] response = EMPTY_VERSIONS_RESPONSE.getBytes(StandardCharsets.UTF_8);
+            try (InputStream is = exchange.getRequestBody()) {
+                capturedRequestBody.set(new String(is.readAllBytes(), StandardCharsets.UTF_8));
+            }
+            byte[] response = mockResponseBody.get().getBytes(StandardCharsets.UTF_8);
             exchange.getResponseHeaders().set("Content-Type", "application/json");
             exchange.sendResponseHeaders(200, response.length);
             try (OutputStream os = exchange.getResponseBody()) {
@@ -224,6 +229,48 @@ public class DAVersionsCollectorTest {
 
         Map<String, List<String>> headers = capturedHeaders.get();
         assertThat(headers.containsKey("Authorization"), is(false));
+    }
+
+    @Test
+    public void availableVersionsArePopulatedFromDAResponse() throws ManipulationException {
+        // NPMVersionsReport uses @JsonUnwrapped on its npmPackage field, so name/version are at the top level
+        // (matches actual DA response shape confirmed by live curl against reports/lookup/npm)
+        mockResponseBody.set(
+                "[{\"name\":\"test-pkg\",\"version\":\"1.0.0\","
+                        + "\"availableVersions\":[\"1.0.0-redhat-00001\",\"1.0.0-redhat-00002\"]}]");
+
+        NpmManipulationSession session = buildSession(null);
+        DAVersionsCollector collector = new DAVersionsCollector();
+        collector.init(session);
+        collector.applyChanges(singleProjectList());
+
+        @SuppressWarnings("unchecked")
+        Map<String, java.util.Set<String>> available = session.getState(
+                DAVersionsCollector.AVAILABLE_VERSIONS,
+                Map.class);
+        assertThat(available != null, is(true));
+        assertThat(available.containsKey("test-pkg"), is(true));
+        assertThat(available.get("test-pkg").contains("1.0.0-redhat-00001"), is(true));
+        assertThat(available.get("test-pkg").contains("1.0.0-redhat-00002"), is(true));
+    }
+
+    @Test
+    public void requestBodyUsesVersionsNPMRequestShape() throws ManipulationException {
+        NpmManipulationSession session = buildSession(null);
+        DAVersionsCollector collector = new DAVersionsCollector();
+        collector.init(session);
+        collector.applyChanges(singleProjectList());
+
+        String body = capturedRequestBody.get();
+        // VersionsNPMRequest serialises with versionFilter / packages / includeAll fields
+        assertThat(body.contains("\"versionFilter\""), is(true));
+        assertThat(body.contains("\"packages\""), is(true));
+        assertThat(body.contains("\"includeAll\""), is(true));
+        // Must NOT use the old NVSchema field name
+        assertThat(body.contains("\"versionFilter\":\"MAJOR_MINOR\""), is(true));
+        // package entry must carry name and version
+        assertThat(body.contains("\"name\":\"test-pkg\""), is(true));
+        assertThat(body.contains("\"version\":\"1.0.0\""), is(true));
     }
 
     // -------------------------------------------------------------------------
