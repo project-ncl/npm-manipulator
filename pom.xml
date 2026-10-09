@@ -68,6 +68,7 @@
   <properties>
     <maven.compiler.release>11</maven.compiler.release>
 
+    <version.org.jboss.da>3.0.8</version.org.jboss.da>
     <version.atlas>1.2.3</version.atlas>
     <version.commons-cli>1.11.0</version.commons-cli>
     <version.commons-codec>1.22.1</version.commons-codec>
@@ -176,6 +177,12 @@
         <groupId>com.ongres</groupId>
         <artifactId>fluent-process</artifactId>
         <version>1.0.1</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jboss.da</groupId>
+        <artifactId>reports-model</artifactId>
+        <version>${version.org.jboss.da}</version>
       </dependency>
 
       <dependency>
