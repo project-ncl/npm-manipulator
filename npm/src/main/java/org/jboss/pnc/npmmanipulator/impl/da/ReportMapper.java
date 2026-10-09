@@ -83,7 +83,7 @@ public class ReportMapper implements ReportObjectMapper {
                 for (Map<String, Object> npmPackage : responseBody) {
                     String name = (String) npmPackage.get("name");
                     String version = (String) npmPackage.get("version");
-                    Version semverVersion = Version.valueOf(version);
+                    Version semverVersion = Version.parse(version);
                     // String bestMatchVersion = (String) npmPackage.get("bestMatchVersion");
                     @SuppressWarnings("unchecked")
                     List<String> availableVersions = (List<String>) npmPackage.get("availableVersions");

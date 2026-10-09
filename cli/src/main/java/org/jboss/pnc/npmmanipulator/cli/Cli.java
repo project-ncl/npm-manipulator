@@ -83,12 +83,12 @@ public class Cli {
                         .longOpt("type")
                         .desc(
                                 "The project type. Can be only NPM for now and is not mandatory. It is not case-sensitive.")
-                        .build());
-        options.addOption(Option.builder("d").longOpt("debug").desc("Enable debug").build());
-        options.addOption(Option.builder("c").longOpt("trace").desc("Enable trace").build());
-        options.addOption(Option.builder("h").longOpt("help").desc("Print help").build());
+                        .get());
+        options.addOption(Option.builder("d").longOpt("debug").desc("Enable debug").get());
+        options.addOption(Option.builder("c").longOpt("trace").desc("Enable trace").get());
+        options.addOption(Option.builder("h").longOpt("help").desc("Print help").get());
         options.addOption(
-                Option.builder("f").longOpt("file").hasArgs().numberOfArgs(1).desc("Project definition file").build());
+                Option.builder("f").longOpt("file").hasArgs().numberOfArgs(1).desc("Project definition file").get());
         options.addOption(
                 Option.builder("r")
                         .longOpt("result")
@@ -96,12 +96,12 @@ public class Cli {
                         .numberOfArgs(1)
                         .desc(
                                 "Json file to be generated at the end of manipulation containing the results. Is not mandatory.")
-                        .build());
-        options.addOption(Option.builder().longOpt("log-context").desc("Add log-context ID").numberOfArgs(1).build());
+                        .get());
+        options.addOption(Option.builder().longOpt("log-context").desc("Add log-context ID").numberOfArgs(1).get());
         options.addOption(
-                Option.builder("l").longOpt("log").desc("Log file to output logging to").numberOfArgs(1).build());
+                Option.builder("l").longOpt("log").desc("Log file to output logging to").numberOfArgs(1).get());
         options.addOption(
-                Option.builder("D").hasArgs().numberOfArgs(2).valueSeparator('=').desc("Java Properties").build());
+                Option.builder("D").hasArgs().numberOfArgs(2).valueSeparator('=').desc("Java Properties").get());
 
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd;
