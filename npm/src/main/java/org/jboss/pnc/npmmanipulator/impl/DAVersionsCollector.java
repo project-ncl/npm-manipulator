@@ -23,10 +23,12 @@ import static org.apache.http.HttpStatus.SC_OK;
 import static org.jboss.pnc.npmmanipulator.impl.NpmPackageVersionManipulator.VersioningStrategy.SEMVER;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -70,6 +72,8 @@ public class DAVersionsCollector implements Manipulator<NpmResult> {
 
     public static final String AVAILABLE_VERSIONS = "availableVersions";
 
+    public static final String REST_HEADERS = "restHeaders";
+
     public static final long DEFAULT_CONNECTION_TIMEOUT_SEC = 30;
 
     public static final long DEFAULT_SOCKET_TIMEOUT_SEC = 600;
@@ -102,6 +106,8 @@ public class DAVersionsCollector implements Manipulator<NpmResult> {
     private long socketTimeout = DEFAULT_SOCKET_TIMEOUT_SEC;
 
     private final Map<String, String> otelHeaders = new HashMap<>();
+
+    private final Map<String, String> restHeaders = new LinkedHashMap<>();
 
     @Override
     public boolean init(final ManipulationSession<NpmResult> session) throws ManipulationException {
@@ -141,6 +147,8 @@ public class DAVersionsCollector implements Manipulator<NpmResult> {
                 logger.warn("Invalid span context {}", current);
             }
         }
+
+        restHeaders.putAll(restHeaderParser(userProps.getProperty(REST_HEADERS, "")));
 
         String versionOverride = userProps.getProperty("versionOverride");
         if (isEmpty(versionOverride)) {
@@ -261,6 +269,7 @@ public class DAVersionsCollector implements Manipulator<NpmResult> {
                     .header("Content-Type", "application/json")
                     .header("Log-Context", getHeaderContext())
                     .headers(otelHeaders)
+                    .headers(restHeaders)
                     .body(restParam)
                     .asObject(Map.class);
 
@@ -350,6 +359,29 @@ public class DAVersionsCollector implements Manipulator<NpmResult> {
             }
         }
         return manipulatorDependencies;
+    }
+
+    /**
+     * Parses a comma-separated list of {@code Name:Value} header pairs into a map. Matches the header parsing
+     * behaviour of PME and GME. Duplicate names are resolved by keeping the last value. An entry with no value part
+     * (e.g. {@code Header:}) produces an empty-string value.
+     *
+     * @param value the raw {@code restHeaders} property value, may be null or empty
+     * @return an ordered map of header name → value; never null
+     */
+    public static Map<String, String> restHeaderParser(String value) {
+        if (isNotEmpty(value)) {
+            return Arrays.stream(value.split(","))
+                    .map(h -> h.split(":", 2))
+                    .filter(h -> h.length > 0 && isNotEmpty(h[0]))
+                    .collect(
+                            Collectors.toMap(
+                                    h -> h[0].trim(),
+                                    h -> h.length > 1 ? h[1].trim() : "",
+                                    (x, y) -> y,
+                                    LinkedHashMap::new));
+        }
+        return Collections.emptyMap();
     }
 
 }
