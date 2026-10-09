@@ -196,7 +196,7 @@ public class DAVersionsCollector implements Manipulator<NpmResult> {
             } else {
                 version = versionBaseOverride;
             }
-            npmPackageRefs.add(new NpmPackageRef(npmPackage.getName(), Version.valueOf(version)));
+            npmPackageRefs.add(new NpmPackageRef(npmPackage.getName(), Version.parse(version)));
         }
 
         final ArrayList<NpmPackageRef> restParam = new ArrayList<>(npmPackageRefs);
